@@ -6,7 +6,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\CincinnatiClient\CincinnatiClient.csproj" />
+    <PackageReference Include="CincinnatiClient" Version="1.0.0" />
   </ItemGroup>
 
 </Project>
