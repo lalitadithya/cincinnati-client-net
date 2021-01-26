@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Net.Http;
 
 namespace CincinnatiClientSdk.Builders
 {
@@ -21,11 +22,11 @@ namespace CincinnatiClientSdk.Builders
             return this;
         }
 
-        public CincinnatiClient Build()
+        public CincinnatiClient Build(HttpClient httpClient)
         {
             if (string.IsNullOrWhiteSpace(serverUrl)) throw new ArgumentNullException(nameof(serverUrl));
             if (string.IsNullOrWhiteSpace(releaseChannel)) throw new ArgumentNullException(nameof(releaseChannel));
-            return new CincinnatiClient(serverUrl, releaseChannel);
+            return new CincinnatiClient(serverUrl, releaseChannel, httpClient);
         }
     }
 }

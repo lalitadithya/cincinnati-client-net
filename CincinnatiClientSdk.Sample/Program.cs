@@ -1,5 +1,6 @@
 ﻿using CincinnatiClientSdk.Builders;
 using System;
+using System.Net.Http;
 
 namespace CincinnatiClientSdk.Sample
 {
@@ -10,7 +11,7 @@ namespace CincinnatiClientSdk.Sample
             CincinnatiClient cincinnatiClient = CincinnatiClientBuilder.GetBuilder()
                 .WithServerUrl("http://localhost:8081")
                 .WithReleaseChannel("stable")
-                .Build();
+                .Build(new HttpClient());
             cincinnatiClient.Start();
         }
     }
