@@ -25,30 +25,15 @@ namespace CincinnatiClientSdk
 
         public async Task<List<Node>> GetNextApplicationVersions(string currentVersion)
         {
-            string requestUri = $"{serverUrl}/v1/graph?channel={channel}";
-            using var requestMessage = new HttpRequestMessage(HttpMethod.Get, requestUri);
-            requestMessage.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-            var httpResult = await httpClient.SendAsync(requestMessage);
-            if (httpResult.IsSuccessStatusCode)
+            await FetchReleaseGraphFromRemote();
+            int indexOfVersion = GetIndexOfVersion(currentVersion);
+            List<int> nextVersionIndices = FindIndicesOfNextRelease(indexOfVersion);
+            List<Node> nextVersions = new List<Node>();
+            foreach (var nextVersionIndex in nextVersionIndices)
             {
-                var options = new JsonSerializerOptions
-                {
-                    PropertyNameCaseInsensitive = true
-                };
-                releaseGraph = await JsonSerializer.DeserializeAsync<ReleaseGraph>(await httpResult.Content.ReadAsStreamAsync(), options);
-                int indexOfVersion = GetIndexOfVersion(currentVersion);
-                List<int> nextVersionIndices = FindIndicexOfNextRelease(indexOfVersion);
-                List<Node> nextVersions = new List<Node>();
-                foreach(var nextVersionIndex in nextVersionIndices)
-                {
-                    nextVersions.Add((Node)releaseGraph.Nodes[nextVersionIndex].Clone());
-                }
-                return nextVersions;
+                nextVersions.Add((Node)releaseGraph.Nodes[nextVersionIndex].Clone());
             }
-            else
-            {
-                throw new HttpRequestException($"Http resut was not success. Reason is {httpResult.ReasonPhrase}");
-            }
+            return nextVersions;
         }
 
         private int GetIndexOfVersion(string version)
@@ -56,11 +41,30 @@ namespace CincinnatiClientSdk
             return releaseGraph.Nodes.FindIndex(x => x.Version == version);
         }
 
-        private List<int> FindIndicexOfNextRelease(int currentVersionIndex)
+        private List<int> FindIndicesOfNextRelease(int currentVersionIndex)
         {
             return releaseGraph.Edges.Where(x => x[0] == currentVersionIndex)
                 .Select(x => x[1])
                 .ToList();
+        }
+
+        private async Task FetchReleaseGraphFromRemote()
+        {
+            string requestUri = $"{serverUrl}/v1/graph?channel={channel}";
+            using var requestMessage = new HttpRequestMessage(HttpMethod.Get, requestUri);
+            requestMessage.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+            var httpResult = await httpClient.SendAsync(requestMessage);
+            if (httpResult.IsSuccessStatusCode)
+            {
+                releaseGraph = await JsonSerializer.DeserializeAsync<ReleaseGraph>(await httpResult.Content.ReadAsStreamAsync(), new JsonSerializerOptions
+                {
+                    PropertyNameCaseInsensitive = true
+                });
+            }
+            else
+            {
+                throw new HttpRequestException($"Http result does not appear to be a success. Reason is {httpResult.ReasonPhrase}");
+            }
         }
     }
 }
