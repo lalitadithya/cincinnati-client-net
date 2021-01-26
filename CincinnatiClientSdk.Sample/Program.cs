@@ -15,7 +15,7 @@ namespace CincinnatiClientSdk.Sample
                 .WithReleaseChannel("stable")
                 .Build(new HttpClient());
             List<Node> nextVersions = cincinnatiClient.GetNextApplicationVersions("1.0.0").GetAwaiter().GetResult();
-            foreach(var nextVersion in nextVersions)
+            foreach (var nextVersion in nextVersions)
             {
                 Console.WriteLine("Next version is " + nextVersion.Version);
             }

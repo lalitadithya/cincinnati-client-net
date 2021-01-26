@@ -15,13 +15,16 @@ namespace CincinnatiClientSdk
         private readonly string serverUrl;
         private readonly string channel;
         private readonly HttpClient httpClient;
+        private readonly Dictionary<string, string> filterParameters;
+
         private ReleaseGraph releaseGraph;
 
-        public CincinnatiClient(string serverUrl, string channel, HttpClient httpClient)
+        public CincinnatiClient(string serverUrl, string channel, HttpClient httpClient, Dictionary<string, string> filterParameters)
         {
             this.serverUrl = serverUrl;
             this.channel = channel;
             this.httpClient = httpClient;
+            this.filterParameters = filterParameters;
         }
 
         public async Task<List<Node>> GetNextApplicationVersions(string currentVersion)
@@ -51,11 +54,7 @@ namespace CincinnatiClientSdk
 
         private async Task FetchReleaseGraphFromRemote()
         {
-            var builder = new UriBuilder($"{serverUrl}/v1/graph");            
-            var query = HttpUtility.ParseQueryString(builder.Query);
-            query["channel"] = channel;
-            builder.Query = query.ToString();
-            using var requestMessage = new HttpRequestMessage(HttpMethod.Get, builder.ToString());
+            using var requestMessage = new HttpRequestMessage(HttpMethod.Get, ConstructServerUri());
             requestMessage.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
             var httpResult = await httpClient.SendAsync(requestMessage);
             if (httpResult.IsSuccessStatusCode)
@@ -69,6 +68,19 @@ namespace CincinnatiClientSdk
             {
                 throw new HttpRequestException($"Http result does not appear to be a success. Reason is {httpResult.ReasonPhrase}");
             }
+        }
+
+        private string ConstructServerUri()
+        {
+            var builder = new UriBuilder($"{serverUrl}/v1/graph");
+            var query = HttpUtility.ParseQueryString(builder.Query);
+            query["channel"] = channel;
+            foreach(var key in filterParameters.Keys)
+            {
+                query[key] = filterParameters[key];
+            }
+            builder.Query = query.ToString();
+            return builder.ToString();
         }
     }
 }

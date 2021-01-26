@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Net.Http;
 
 namespace CincinnatiClientSdk.Builders
@@ -7,6 +8,7 @@ namespace CincinnatiClientSdk.Builders
     {
         private string serverUrl;
         private string releaseChannel;
+        private Dictionary<string, string> filterParameters = new Dictionary<string, string>();
 
         public static CincinnatiClientBuilder GetBuilder() => new CincinnatiClientBuilder();
 
@@ -22,11 +24,17 @@ namespace CincinnatiClientSdk.Builders
             return this;
         }
 
+        public CincinnatiClientBuilder AddAdditionalFilterParameters(Dictionary<string, string> filterParameters)
+        {
+            this.filterParameters = filterParameters;
+            return this;
+        }
+
         public CincinnatiClient Build(HttpClient httpClient)
         {
             if (string.IsNullOrWhiteSpace(serverUrl)) throw new NullReferenceException(nameof(serverUrl));
             if (string.IsNullOrWhiteSpace(releaseChannel)) throw new NullReferenceException(nameof(releaseChannel));
-            return new CincinnatiClient(serverUrl, releaseChannel, httpClient);
+            return new CincinnatiClient(serverUrl, releaseChannel, httpClient, filterParameters);
         }
     }
 }
