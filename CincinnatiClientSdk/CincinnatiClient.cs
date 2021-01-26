@@ -1,6 +1,8 @@
-﻿using System;
+﻿using CincinnatiClientSdk.Models;
+using System;
 using System.Net.Http;
 using System.Net.Http.Headers;
+using System.Text.Json;
 using System.Threading.Tasks;
 
 namespace CincinnatiClientSdk
@@ -26,7 +28,11 @@ namespace CincinnatiClientSdk
             var httpResult = await httpClient.SendAsync(requestMessage);
             if (httpResult.IsSuccessStatusCode)
             {
-                Console.WriteLine(await httpResult.Content.ReadAsStringAsync());
+                var options = new JsonSerializerOptions
+                {
+                    PropertyNameCaseInsensitive = true
+                };
+                var releaseGraph = await JsonSerializer.DeserializeAsync<ReleaseGraph>(await httpResult.Content.ReadAsStreamAsync(), options);
             }
             else
             {
