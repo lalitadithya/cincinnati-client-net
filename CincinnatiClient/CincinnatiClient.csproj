@@ -4,7 +4,7 @@
     <TargetFramework>net5.0</TargetFramework>
     <Authors>Lalit Adithya</Authors>
     <Product>Cincinnati Client</Product>
-    <Description>This is .NET client library for Openshift's Cincinnati Update protocol.</Description>
+    <Description>.NET client library for Openshift's Cincinnati</Description>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <Copyright />
     <PackageId>CincinnatiClient</PackageId>
