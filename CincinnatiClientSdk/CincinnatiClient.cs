@@ -6,6 +6,7 @@ using System.Text.Json;
 using System.Threading.Tasks;
 using System.Linq;
 using System.Collections.Generic;
+using System.Web;
 
 namespace CincinnatiClientSdk
 {
@@ -50,8 +51,11 @@ namespace CincinnatiClientSdk
 
         private async Task FetchReleaseGraphFromRemote()
         {
-            string requestUri = $"{serverUrl}/v1/graph?channel={channel}";
-            using var requestMessage = new HttpRequestMessage(HttpMethod.Get, requestUri);
+            var builder = new UriBuilder($"{serverUrl}/v1/graph");            
+            var query = HttpUtility.ParseQueryString(builder.Query);
+            query["channel"] = channel;
+            builder.Query = query.ToString();
+            using var requestMessage = new HttpRequestMessage(HttpMethod.Get, builder.ToString());
             requestMessage.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
             var httpResult = await httpClient.SendAsync(requestMessage);
             if (httpResult.IsSuccessStatusCode)
