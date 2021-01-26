@@ -1,4 +1,5 @@
-﻿using System;
+﻿using CincinnatiClientSdk.Builders;
+using System;
 
 namespace CincinnatiClientSdk.Sample
 {
@@ -6,7 +7,10 @@ namespace CincinnatiClientSdk.Sample
     {
         static void Main(string[] args)
         {
-            CincinnatiClient cincinnatiClient = new CincinnatiClient();
+            CincinnatiClient cincinnatiClient = CincinnatiClientBuilder.GetBuilder()
+                .WithServerUrl("http://localhost:8081")
+                .WithReleaseChannel("stable")
+                .Build();
             cincinnatiClient.Start();
         }
     }
