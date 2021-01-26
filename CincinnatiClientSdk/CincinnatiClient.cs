@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Net.Http;
+using System.Net.Http.Headers;
+using System.Threading.Tasks;
 
 namespace CincinnatiClientSdk
 {
@@ -16,9 +18,20 @@ namespace CincinnatiClientSdk
             this.httpClient = httpClient;
         }
 
-        public void Start()
+        public async Task GetNextApplicationVersions(string currentVersion)
         {
-            Console.WriteLine("Hello, World");
+            string requestUri = $"{serverUrl}/v1/graph?channel={channel}";
+            using var requestMessage = new HttpRequestMessage(HttpMethod.Get, requestUri);
+            requestMessage.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+            var httpResult = await httpClient.SendAsync(requestMessage);
+            if (httpResult.IsSuccessStatusCode)
+            {
+                Console.WriteLine(await httpResult.Content.ReadAsStringAsync());
+            }
+            else
+            {
+                throw new HttpRequestException($"Http resut was not success. Reason is {httpResult.ReasonPhrase}");
+            }
         }
     }
 }

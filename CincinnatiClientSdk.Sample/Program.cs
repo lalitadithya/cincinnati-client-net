@@ -12,7 +12,7 @@ namespace CincinnatiClientSdk.Sample
                 .WithServerUrl("http://localhost:8081")
                 .WithReleaseChannel("stable")
                 .Build(new HttpClient());
-            cincinnatiClient.Start();
+            cincinnatiClient.GetNextApplicationVersions("1.0.0").GetAwaiter().GetResult();
         }
     }
 }
