@@ -6,7 +6,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\CincinnatiClientSdk\CincinnatiClientSdk.csproj" />
+    <ProjectReference Include="..\CincinnatiClient\CincinnatiClient.csproj" />
   </ItemGroup>
 
 </Project>
