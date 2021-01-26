@@ -24,8 +24,8 @@ namespace CincinnatiClientSdk.Builders
 
         public CincinnatiClient Build(HttpClient httpClient)
         {
-            if (string.IsNullOrWhiteSpace(serverUrl)) throw new ArgumentNullException(nameof(serverUrl));
-            if (string.IsNullOrWhiteSpace(releaseChannel)) throw new ArgumentNullException(nameof(releaseChannel));
+            if (string.IsNullOrWhiteSpace(serverUrl)) throw new NullReferenceException(nameof(serverUrl));
+            if (string.IsNullOrWhiteSpace(releaseChannel)) throw new NullReferenceException(nameof(releaseChannel));
             return new CincinnatiClient(serverUrl, releaseChannel, httpClient);
         }
     }
